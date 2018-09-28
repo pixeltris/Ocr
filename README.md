@@ -8,4 +8,4 @@ OCR tool which supports various OCR APIs (Tesseract, GoogleVision, Win10, ABBYY,
 
 - Guide on how to set it up (and a release build)
 - Fix broken screen region selector on some screens (+Win10?)
-- Restore the last selected dropdowns (OCR engine, image pre-processor, language)
+- Save / restore the last selected dropdowns on load (OCR engine, image pre-processor, language)
