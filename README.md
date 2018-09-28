@@ -1,6 +1,6 @@
 # Ocr
 
-OCR tool which supports various OCR APIs (Tesseract, GoogleVision, Win10, ABBYY, Nicomsoft). The detected text can then be translated using various translation APIS (Google, Bing, Yandex, Baidu, etc).
+OCR tool which supports various OCR APIs (Tesseract, GoogleVision, Win10, ABBYY, Nicomsoft). The detected text can then be translated using various translation APIs (Google, Bing, Yandex, Baidu, etc).
 
 ![Alt text](https://raw.githubusercontent.com/pixeltris/Ocr/master/Screenshots/1.png)
 
