@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E8C57DA-D5B7-4BB5-8DFC-FB0BE9F3403D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ocr</RootNamespace>
+    <AssemblyName>OCR</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Ocr.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Automation.cs" />
+    <Compile Include="Engines\ABBYY\AbbyyOcr.cs" />
+    <Compile Include="Engines\Google\ClipSyncServer.cs" />
+    <Compile Include="Engines\Google\GoogleOcr.cs" />
+    <Compile Include="Engines\GoogleVision\GoogleVisionOcr.cs" />
+    <Compile Include="Engines\Nicomsoft\NicomsoftOcr.cs" />
+    <Compile Include="Engines\RemoteOcr\RemoteOcr.cs" />
+    <Compile Include="Engines\Tesseract\TesseractOcr.cs" />
+    <Compile Include="Engines\Windows\WindowsOcr.cs" />
+    <Compile Include="ImageFinder.cs" />
+    <Compile Include="Input\AutoTyper.cs" />
+    <Compile Include="Input\Hotkeys.cs" />
+    <Compile Include="Input\PInvoke.cs" />
+    <Compile Include="LanguagePackExtractor\LanguagePackExtractor.cs" />
+    <Compile Include="LanguagePackExtractor\LanguagePackExtractorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LanguagePackExtractor\LanguagePackExtractorForm.Designer.cs">
+      <DependentUpon>LanguagePackExtractorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LanguagePackExtractor\LocaleHelper.cs" />
+    <Compile Include="OcrArea.cs" />
+    <Compile Include="OcrEngine.cs" />
+    <Compile Include="OcrEngineProfile.cs" />
+    <Compile Include="OcrEngineType.cs" />
+    <Compile Include="OcrHelper.cs" />
+    <Compile Include="OcrImage.cs" />
+    <Compile Include="OcrLine.cs" />
+    <Compile Include="OcrNetwork.cs" />
+    <Compile Include="OcrRect.cs" />
+    <Compile Include="OcrResult.cs" />
+    <Compile Include="OcrWord.cs" />
+    <Compile Include="OcrXml.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TranslateHelper.cs" />
+    <Compile Include="Translate\JSEngine.cs" />
+    <Compile Include="Translate\Translators\BabylonTranslator.cs" />
+    <Compile Include="Translate\Translators\BaiduTranslator.cs" />
+    <Compile Include="Translate\Translators\BingTranslator.cs" />
+    <Compile Include="Translate\Translators\GoogleTranslator.cs" />
+    <Compile Include="Translate\JSONSerializer.cs" />
+    <Compile Include="Translate\Translators\PromptTranslator.cs" />
+    <Compile Include="Translate\Translators\SDLTranslator.cs" />
+    <Compile Include="Translate\Translator.cs" />
+    <Compile Include="Translate\TranslatorType.cs" />
+    <Compile Include="Translate\WebUtils.cs" />
+    <Compile Include="Translate\Translators\YandexTranslator.cs" />
+    <Compile Include="UI\CompactToolForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\CompactToolForm.Designer.cs">
+      <DependentUpon>CompactToolForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\IconHelper.cs" />
+    <Compile Include="UI\ImageBox\DragHandles\DragHandle.cs" />
+    <Compile Include="UI\ImageBox\DragHandles\DragHandleAnchor.cs" />
+    <Compile Include="UI\ImageBox\DragHandles\DragHandleCollection.cs" />
+    <Compile Include="UI\ImageBox\DragHandles\ImageBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageBox\ImageBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageBox\ImageBoxActionSources.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxBorderStyle.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxCancelEventArgs.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxGridDisplayMode.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxGridScale.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxNativeMethods.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxSelectionMode.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxSizeMode.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxZoomActions.cs" />
+    <Compile Include="UI\ImageBox\ImageBoxZoomEventArgs.cs" />
+    <Compile Include="UI\ImageBox\ScrollControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageBox\ScrollProperties.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageBox\VirtualScrollableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageBox\ZoomLevelCollection.cs" />
+    <Compile Include="UI\ImageBox\ZoomLevelCollectionConverter.cs" />
+    <Compile Include="UI\ImageUtilities.cs" />
+    <Compile Include="UI\LanguageSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LanguageSelectionForm.Designer.cs">
+      <DependentUpon>LanguageSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ObjectExtensions.cs" />
+    <Compile Include="UI\ReflectionEquals.cs" />
+    <Compile Include="UI\ReflectionExtensions.cs" />
+    <Compile Include="UI\SimpleSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SimpleSettingsForm.Designer.cs">
+      <DependentUpon>SimpleSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ToolStripComboBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ToolStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\WPF\CompactButton.cs" />
+    <Compile Include="UI\WPF\CompactContainer.cs" />
+    <Compile Include="UI\WPF\CompactHeader.cs" />
+    <Compile Include="UI\WPF\CompactTextBox.cs" />
+    <Compile Include="UI\WPF\ContextMenus\CaptureContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\CompactContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\LanguageContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\LayoutContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\MainContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\OcrEngineContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\OcrEngineProfileContextMenu.cs" />
+    <Compile Include="UI\WPF\ContextMenus\TranslateContextMenu.cs" />
+    <Compile Include="UI\Extensions.cs" />
+    <Compile Include="UI\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\OcrImagePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Settings.cs" />
+    <Compile Include="UI\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WPF\Native.cs" />
+    <Compile Include="UI\WPF\SnippingTool.cs" />
+    <Compile Include="UI\WPF\Tests.cs" />
+    <Compile Include="UI\WPF\WindowDragger.cs" />
+    <Compile Include="UI\WPF\WPFCompactForm.cs" />
+    <EmbeddedResource Include="LanguagePackExtractor\LanguagePackExtractorForm.resx">
+      <DependentUpon>LanguagePackExtractorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI\CompactToolForm.resx">
+      <DependentUpon>CompactToolForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\LanguageSelectionForm.resx">
+      <DependentUpon>LanguageSelectionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="OcrResult.Serialization.cs" />
+    <EmbeddedResource Include="UI\SimpleSettingsForm.resx">
+      <DependentUpon>SimpleSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Default27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LostFocus27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Minimize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Ocr.ico" />
+    <None Include="Resources\PaintCursor.cur" />
+    <None Include="Resources\PaintCursor.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
