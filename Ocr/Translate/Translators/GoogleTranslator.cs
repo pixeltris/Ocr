@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Runtime.Serialization;
 
 namespace Ocr.Translate
 {
@@ -28,11 +29,85 @@ namespace Ocr.Translate
 
         public static new string Translate(string input, string fromLanguage, string toLanguage)
         {
-            return Translate(input, fromLanguage + "|" + toLanguage);
+            return TranslateWithToken(input, fromLanguage, toLanguage);
         }
 
-        public static string Translate(string input, string languagePair)
+        private static string TranslateWithToken(string input, string fromLanguage, string toLanguage)
         {
+            string token = GenerateTk(input);//LazyGenerateToken(input);
+
+            // There are a lot of url options available, see the following
+            // https://github.com/Stichoza/google-translate-php/blob/master/src/GoogleTranslate.php
+
+            input = HttpUtility.UrlEncode(input);
+            string url = string.Format("https://translate.google.com/translate_a/single?client=webapp&sl={0}&tl={1}&dt=t&tk={2}&q={3}",
+                fromLanguage, toLanguage, token, input);
+            using (WebClient webClient = new WebClient())
+            {
+                webClient.Proxy = null;
+                webClient.Encoding = Encoding.UTF8;
+
+                string result = string.Empty;
+
+                string json = webClient.DownloadStringAwareOfEncoding(url);
+                TranslateResponse response = JSONSerializer<TranslateResponse>.DeSerialize(json);
+                object[] items = response[0] as object[];
+                foreach (object item in items)
+                {
+                    object[] values = item as object[];
+                    result += values[0] as string;
+                }
+
+                return result;
+            }
+        }
+
+        // The json response doesn't contain named members, we use an object list and access the values we want directly
+        [CollectionDataContract]
+        public class TranslateResponse : List<object>
+        {            
+        }
+
+        private static string TranslateMobile(string input, string fromLanguage, string toLanguage)
+        {
+            // NOTE: This version doesn't preserve new line characters
+
+            // Based on https://github.com/mouuff/mtranslate/blob/master/mtranslate/core.py
+            // This uses the mobile page which doesn't require javascript (we can get the result from the html response)
+
+            // sl = source language
+            // tl = target language
+            // q = text to translate
+            input = HttpUtility.UrlEncode(input);
+            string url = string.Format("https://translate.google.com/m?sl={0}&tl={1}&q={2}", fromLanguage, toLanguage, input);
+            using (WebClient webClient = new WebClient())
+            {
+                webClient.Proxy = null;
+                webClient.Encoding = Encoding.UTF8;
+                string result = webClient.DownloadStringAwareOfEncoding(url);
+                int textStartIndex = result.IndexOf("\"t0\"");
+                if (textStartIndex >= 0 && result[textStartIndex + 4] == '>')
+                {
+                    textStartIndex += 5;
+                    int textEndIndex = result.IndexOf("</div>", textStartIndex);
+                    if (textEndIndex > textStartIndex)
+                    {
+                        int textLen = textEndIndex - textStartIndex;
+                        string text = result.Substring(textStartIndex, textLen);
+                        return text;
+                    }
+                }
+            }
+            return "Failed to get the result";
+        }
+
+        private static string OldTranslate(string input, string languagePair)
+        {
+            // This version doesn't work anymore. The main translate.google.com page now requires javascript to function.
+            // When entering the main translate page, the result is essentially a blank page with a bunch of javascript.
+
+            //OldTranslate(input, fromLanguage + "|" + toLanguage);
+
             input = HttpUtility.UrlEncode(input);
             string url = string.Format("https://translate.google.com/?hl=en&ie=UTF8&oe=UTF8&text={0}&langpair={1}", input, languagePair);
             using (WebClient webClient = new WebClient())
@@ -169,6 +244,54 @@ namespace Ocr.Translate
         // http://stackoverflow.com/a/34687566
         // https://github.com/Stichoza/google-translate-php/issues/32
 
+        static ScriptEngine jsEngine = null;
+        private static string LazyGenerateToken(string text)
+        {
+            if (jsEngine == null)
+            {
+                jsEngine = new ScriptEngine("jscript");
+            }
+
+            // https://github.com/hujingshuang/MTrans/blob/master/tk/Google.js
+            ParsedScript parsed = jsEngine.Parse(@"function token(a) {
+    var k = """";
+    var b = 406644;
+    var b1 = 3293161072;
+
+    var jd = ""."";
+    var sb = ""+-a^+6"";
+    var Zb = ""+-3^+b+-f"";
+
+    for (var e = [], f = 0, g = 0; g < a.length; g++) {
+        var m = a.charCodeAt(g);
+        128 > m ? e[f++] = m: (2048 > m ? e[f++] = m >> 6 | 192 : (55296 == (m & 64512) && g + 1 < a.length && 56320 == (a.charCodeAt(g + 1) & 64512) ? (m = 65536 + ((m & 1023) << 10) + (a.charCodeAt(++g) & 1023), e[f++] = m >> 18 | 240, e[f++] = m >> 12 & 63 | 128) : e[f++] = m >> 12 | 224, e[f++] = m >> 6 & 63 | 128), e[f++] = m & 63 | 128)
+    }
+    a = b;
+    for (f = 0; f < e.length; f++) a += e[f],
+    a = RL(a, sb);
+    a = RL(a, Zb);
+    a ^= b1 || 0;
+    0 > a && (a = (a & 2147483647) + 2147483648);
+    a %= 1E6;
+    return a.toString() + jd + (a ^ b)
+};
+
+function RL(a, b) {
+    var t = ""a"";
+    var Yb = ""+"";
+    for (var c = 0; c < b.length - 2; c += 3) {
+        var d = b.charAt(c + 2),
+        d = d >= t ? d.charCodeAt(0) - 87 : Number(d),
+        d = b.charAt(c + 1) == Yb ? a >>> d: a << d;
+        a = b.charAt(c) == Yb ? a + d & 4294967295 : a ^ d
+    }
+    return a
+}");
+            return parsed.CallMethod("token", text).ToString();        
+        }
+
+        // Did I originally convert this from javascript to C#? Or did I get it from somewhere online?
+        // Either way this is now updated and based on https://github.com/hujingshuang/MTrans/blob/master/tk/Google.js
         private static string GenerateTk(string request)
         {
             return TL(request);
@@ -179,8 +302,8 @@ namespace Ocr.Translate
             for (int c = 0; c < b.Length - 2; c += 3)
             {
                 int d = b[c + 2];
-                d = d >= 'a' ? d - 87 : d;
-                d = b[c + 1] == '+' ? a >> d : a << d;
+                d = d >= 'a' ? d - 87 : d - '0';// d-'0' is the same as javascript Number(d)
+                d = b[c + 1] == '+' ? (int)((uint)a >> d) : a << d;
                 a = (int)(b[c] == '+' ? a + d & 4294967295 : a ^ d);
             }
             return a;
@@ -188,7 +311,10 @@ namespace Ocr.Translate
 
         private static string TL(string a)
         {
-            const int b = 402890;
+            int b = 406644;
+            uint b1_unsigned = 3293161072;
+            int b1 = (int)b1_unsigned;
+
             int[] d = new int[a.Length];
             for (int e = 0, f = 0; f < a.Length; f++)
             {
@@ -229,8 +355,9 @@ namespace Ocr.Translate
                 ab = RL(ab, "+-a^+6");
             }
             ab = RL(ab, "+-3^+b+-f");
+            ab ^= b1;// || 0;
             if (0 > ab) ab = (int)((ab & 2147483647) + 2147483648);
-            ab %= (int)Math.Pow(10, 6);
+            ab = (int)((uint)ab % 1000000);// %= 1E6; //(int)Math.Pow(10, 6);
             return ab + "." + (ab ^ b);
         }
 
